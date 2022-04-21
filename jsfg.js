@@ -77,7 +77,6 @@ function stamp() {
 };
 
 function textbox() {
-    //console.log(d);
     draw("CanvasTest", d, 160, 20)
 }
 
@@ -87,8 +86,10 @@ function dialogueclear() {
 };
 
 function dialogue(input) {
+    console.log(d);
     d = input;
-    setTimeout(dialogueclear(), 500)
+    setTimeout(dialogueclear, 500)
+    console.log(d);
 };
 
 function physicsprocess() {
@@ -162,12 +163,6 @@ function clear() {
     ctx.clearRect(0, 0, c.width, c.height);
 }
 
-function draw(text, tX, tY, px) {
-    var c = document.getElementById("CanvasTest");
-    var ctx = c.getContext("2d");
-    ctx.font = px + "px " + "Courier New";
-    ctx.strokeText(text, tX, tY);
-};
 
 //Process Setup
 var lastUpdate = Date.now(); //deltatime handler
