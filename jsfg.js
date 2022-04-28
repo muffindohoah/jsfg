@@ -1,12 +1,18 @@
 // Player Setup
-var p1Y = 0;
+var p1Y = 240;
 var p1X = 0;
+var p1sY = 80
+var p1Yv
+var p1Xv
+var gravity = 0.6
 
-var hbX
-var hbY
-var hbsX
-var hbsY
+var hbX = 0
+var hbY = 0
+var hbsX = 0
+var hbsY = 0
 
+var NPCData = [undefined, 90, 250, 38, 70, "DarkMagenta"]
+var EnemyData = [undefined]
 
 var camX = 1
 var camY = 1
@@ -14,7 +20,7 @@ var zoom = 1
 
 var spd = 1;
 
-var d
+var d = "[ M To Interact ]"
 
 //Canvas Setup
 var box = jQuery('.box');	// reference to the HTML .box element
@@ -39,10 +45,10 @@ function getRandomInt(min, max) {
 
 
 function draw(canvas, text, tX, tY) {
-        var c = document.getElementById(canvas);
-        var ctx = c.getContext("2d");
-        ctx.font = "16px MSGothic";
-        ctx.strokeText(text, tX, tY);
+    var c = document.getElementById(canvas);
+    var ctx = c.getContext("2d");
+    ctx.font = "16px MSGothic";
+    ctx.strokeText(text, tX, tY);
 };
 
 //Key Detection
@@ -69,6 +75,9 @@ function myKeyPress(e) {
 
 function stamp() {
     camera();
+    npc();
+    enemy();
+    aiprocess();
     floor();
     //physicsprocess();
     player();
@@ -76,8 +85,16 @@ function stamp() {
     textbox();
 };
 
+function checkcolission() {
+    for (var i = 0; i <= (NPCData.length / 5); i++) {
+        console.log(NPCData[1])
+        if (p1X - 40 < NPCData[1] && p1X + 40 > NPCData[1])
+            return "NPC1" 
+    }
+};
+
 function textbox() {
-    draw("CanvasTest", d, 160, 20)
+    draw("Dialogue", d, 200, 50)
 }
 
 function dialogueclear() {
@@ -88,7 +105,7 @@ function dialogueclear() {
 function dialogue(input) {
     console.log(d);
     d = input;
-    setTimeout(dialogueclear, 500)
+    setTimeout(dialogueclear, input.length * 100 + 200)
     console.log(d);
 };
 
@@ -99,7 +116,7 @@ function physicsprocess() {
 
 function hitbox() {
 
-    rect(hbX, hbY, hbsX * zoom, hbsY * zoom, "#FF0000")
+    rect((p1X - camX) - hbX, (p1Y - camY) - hbY, hbsX * zoom, hbsY * zoom, "#FF0000")
 
 }
 
@@ -117,28 +134,66 @@ function camera() {
 };
 
 function player() {
-    p1Y = 240
-    rect(p1X - camX * zoom, p1Y - camY * zoom, 40 * zoom, 80 * zoom);
+    //p1Y = 240
+
+    rect(p1X - camX * zoom, (p1Y - (p1sY - 80)) - camY * zoom, 40 * zoom, p1sY * zoom);
+    p1sY = 80
 };
 
 function interact() {
-
+    if (checkcolission() == "NPC1") {
+        dialogue("hey dawg! home slice!");
+    }
 
 };
 
-function attack() {
-    console.log("atk")
-    hbX = 30
-    hbY = 30
-    hbsX = 30
-    hbsY = 30
+function attack(dir) {
+    console.log("atk" + dir)
+    if (dir == 1) {
+        hbX = 20
+    } else if (dir == 2) {
+        hbX = -40
+    } else if (dir = 0) {
+        hbX = 0
+    };
+    hbY = -20
+    hbsX = 25
+    hbsY = 23
+    console.log(hbX)
     const myTimeout = setTimeout(hitboxclear, 500);
 };
 
+function crouch() {
+    p1sY = 60
+
+}
 
 function jump() {
     var jheight = 40
-    setInterval()
+    p1Yv = 10
+    p1Xv = 0
+    for (var i = 0; i > 50; i++) {
+
+        //p1Yv += gravity;
+        p1Y += p1Yv;
+        p1X += p1Xv;
+    };
+};
+
+function npc() {
+    for (var i = 0; i <= (NPCData.length / 5); i++) {
+        rect(NPCData[1 * i] - camX * zoom, NPCData[2 * i] - camY * zoom, NPCData[3 * i] * zoom, NPCData[4 * i] * zoom, NPCData[5 * i]);
+    }
+
+};
+
+function aiprocess() {
+
+};
+
+function spawnenemy() {
+var eX
+var eY
 };
 
 function floor() {
@@ -160,25 +215,55 @@ function elipses(eX, eY, size) {
 };
 
 function clear() {
+
     ctx.clearRect(0, 0, c.width, c.height);
+
+    c = document.getElementById("Dialogue");
+    ctx = c.getContext("2d");
+    const context = c.getContext('2d');
+
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    c = document.getElementById("CanvasTest");
+    ctx = c.getContext("2d");
 }
 
+function debug() {
+    dialogue("This is a test.")
+    console.log(hbX)
+    console.log(hbsX)
+    console.log(map)
+    console.log(NPCData.length)
+}
 
 //Process Setup
-var lastUpdate = Date.now(); //deltatime handler
+var lastUpdate = Date.now(); //deltatime handler  && hbsX == undefined
 var now = Date.now();
 var dt = now - lastUpdate;
 setInterval(process, dt)
 
 function getpress() {
     onkeydown = onkeyup = function (e) {
-        e = e || event; // to deal with IE
+        e = e || event; // to deal with IE map 39 is right, 37 is left
         map[e.keyCode] = e.type == 'keydown';
     }
-    if (map[37]) { //Left
-        p1X += -1
+    if (map[40]) {
+        crouch();
+        if (map[37]) {
+            p1X += -0.5
+        } else if (map[39]) {
+            p1X += 0.5
+        }
+    } else if (map[37]) { //Left
+        p1X += -1.0
+        if (map[78]) {
+            attack(1);
+        }
     } else if (map[39]) { //Right
-        p1X += 1
+        p1X += 1.0
+        if (map[78]) {
+            attack(2);
+        }
     } else if (map[219]) {
         zoom += 0.01
         console.log(zoom)
@@ -186,10 +271,12 @@ function getpress() {
         zoom += -0.01
     } else if (map[38]) {
         jump();
-    } else if (map[78] && hbsX != 0) {
-        attack();
+    } else if (map[78]) {
+        attack(0);
     } else if (map[77]) {
         interact();
+    } else if (map[68]) {
+        debug();
     }
 
 };
