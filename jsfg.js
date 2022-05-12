@@ -12,7 +12,9 @@ var hbsX = 0
 var hbsY = 0
 
 var NPCData = [undefined, 90, 250, 38, 70, "DarkMagenta"]
-var EnemyData = [undefined]
+var EnemyData = {
+    "1": null
+}
 
 var camX = 1
 var camY = 1
@@ -89,7 +91,7 @@ function checkcolission() {
     for (var i = 0; i <= (NPCData.length / 5); i++) {
         console.log(NPCData[1])
         if (p1X - 40 < NPCData[1] && p1X + 40 > NPCData[1])
-            return "NPC1" 
+            return "NPC1"
     }
 };
 
@@ -191,9 +193,32 @@ function aiprocess() {
 
 };
 
+function enemy() {
+    var enemies = round(Object.keys(EnemyData).length / 5);
+    for (enemies) {
+        rect(EnemyData[1 * i] - camX * zoom, EnemyData[2 * i] - camY * zoom, EnemyData[3 * 1] * zoom, EnemyData[4 * 1] * zoom, EnemyData[5 * i]);
+    }
+
+}
+
 function spawnenemy() {
-var eX
-var eY
+    var enemies = round(Object.keys(EnemyData).length / 5);
+    var data = []
+    var eX = getRandomInt(200, 400)
+    var eY = 90
+    var eC = "Red"
+    var eSX = 38
+    var eSY = 70
+
+    data.push(eX)
+    data.push(eY)
+    data.push(eC)
+    data.push(eSX)
+    data.push(eSY)
+
+
+    var Enemy = data
+    EnemyData.Enemy.data
 };
 
 function floor() {
